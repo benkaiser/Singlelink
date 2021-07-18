@@ -7,10 +7,10 @@ import {config} from "../config/config";
  */
 export class DatabaseManager {
   pool = new Pool({
-    connectionString: config.database,
-    ssl: {
+    connectionString: config.database ? config.database : 'postgresql://postgres@postgres:5432/postgres',
+    ssl: config.database ? {
       rejectUnauthorized: false
-    }
+    } : false
   });
 
   /**

@@ -1,6 +1,13 @@
 version: "3.1"
 
 services:
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+    networks:
+      - singlelink
   singlelink-server:
     image: neutroncreative/singlelink-server:latest
     build:
@@ -28,7 +35,7 @@ services:
       - MIXPANEL_TOKEN
       - DELETE_ADDON_INSTALLS_THRESHOLD
     ports:
-      - "5566:5566"
+      - "5566:80"
     networks:
       - singlelink
   singlelink-editor:
@@ -36,13 +43,15 @@ services:
     build:
       context: client
       dockerfile: client.Dockerfile
+      args:
+        API_URL: "http://localhost:5566/"
     depends_on:
       - singlelink-server
     environment:
       - HOSTNAME
-      - API_URL
+      - API_URL="http://singlelink-server/"
     ports:
-      - "80:80"
+      - "8080:80"
     networks:
       - singlelink
 
